@@ -24,6 +24,15 @@ public class EnemyScript : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             Debug.Log("hit detected");
+            if (collision.gameObject.GetComponent<PlayerController>().isDashing)
+            {
+                // Dashing player destroys an enemy
+                Destroy(gameObject);
+            }
+            else
+            {
+                // Non-dashing player gets hurt
+            }
         }
     }
 

@@ -8,37 +8,57 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float doubleJumpForce = 250f;
     bool doubleJump = false;
     [SerializeField] private LayerMask groundLayerMask;
+    public bool isDashing = false;
+    private float dashTime = 0.5f;
 
     public Rigidbody2D rigidbody2d;
     public BoxCollider2D boxCollider2d;
+
+    private TimeManager timeManager;
+    [SerializeField] private GameObject moveOptions;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody2d = transform.GetComponent<Rigidbody2D>();
         boxCollider2d = transform.GetComponent<BoxCollider2D>();
+        timeManager = GameObject.Find("TimeManager").GetComponent<TimeManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        // Movement controls
         if (IsGrounded() && Input.GetKeyDown(KeyCode.UpArrow))
         {
+            StopShowingOptions();
             rigidbody2d.AddForce(new Vector2(0, jumpForce));
         }
 
         if (!IsGrounded() && Input.GetKeyDown(KeyCode.DownArrow))
         {
+            StopShowingOptions();
             rigidbody2d.AddForce(new Vector2(0, -jumpForce));
             rigidbody2d.AddForce(new Vector2(0, -jumpForce));
         }
         else if (!IsGrounded() && Input.GetKeyDown(KeyCode.UpArrow))
         {
+            StopShowingOptions();
             rigidbody2d.AddForce(new Vector2(0, doubleJumpForce));
             doubleJump = false;
         }
 
+        // A "dash" simulated by speeding up time briefly
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            StopShowingOptions();
+            timeManager.ChangeTimescale(3f, dashTime);
+            isDashing = true;
+            StartCoroutine(Dash());
+        }
+
+        // keep MoveOptions transform position updated
+        moveOptions.transform.position = transform.position;
     }
 
     private bool IsGrounded()
@@ -62,4 +82,29 @@ public class PlayerController : MonoBehaviour
         return raycastHit.collider != null;
     }
 
+    public void ShowOptions()
+    {
+        timeManager.ChangeTimescale(0f, 0f);
+        moveOptions.SetActive(true);
+        if (IsGrounded())
+        {
+            moveOptions.transform.GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            moveOptions.transform.GetChild(1).gameObject.SetActive(true);
+        }
+    }
+
+    public void StopShowingOptions()
+    {
+        timeManager.ResetTimescale();
+        moveOptions.SetActive(false);
+    }
+
+    IEnumerator Dash()
+    {
+        yield return new WaitForSeconds(dashTime);
+        isDashing = false;
+    }
 }
