@@ -11,12 +11,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
     public bool isDashing = false;
     private float dashTime = 0.5f;
+    private float dashCoolDown = 2f;
+    private float dashTimer = 0f;
 
     public Rigidbody2D rigidbody2d;
     public BoxCollider2D boxCollider2d;
 
     private TimeManager timeManager;
     [SerializeField] private GameObject moveOptions;
+    private bool isShowingOptions = false;
 
     // Start is called before the first frame update
     void Start()
@@ -50,11 +53,20 @@ public class PlayerController : MonoBehaviour
 
 
         // A "dash" simulated by speeding up time briefly
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (dashTimer > 0f)
+        {
+            dashTimer -= Time.unscaledDeltaTime;
+        }
+        if (dashTimer <= 0 && isShowingOptions)
+        {
+            moveOptions.transform.GetChild(2).gameObject.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow) && dashTimer <= 0f)
         {
             StopShowingOptions();
             timeManager.ChangeTimescale(3f, dashTime);
             isDashing = true;
+            dashTimer = dashCoolDown;
             StartCoroutine(Dash());
         }
 
@@ -64,7 +76,10 @@ public class PlayerController : MonoBehaviour
         }
 
         // keep MoveOptions transform position updated
-        moveOptions.transform.position = transform.position;
+        if (isShowingOptions)
+        {
+            moveOptions.transform.position = transform.position;
+        }
     }
 
     private bool IsGrounded()
@@ -89,7 +104,9 @@ public class PlayerController : MonoBehaviour
 
     public void ShowOptions()
     {
+        isShowingOptions = true;
         timeManager.ChangeTimescale(0f, 0f);
+        moveOptions.transform.position = transform.position;
         moveOptions.SetActive(true);
         if (IsGrounded())
         {
@@ -99,10 +116,20 @@ public class PlayerController : MonoBehaviour
         {
             moveOptions.transform.GetChild(1).gameObject.SetActive(true);
         }
+
+        if (dashTimer < 0f)
+        {
+            moveOptions.transform.GetChild(2).gameObject.SetActive(true);
+        }
+        else
+        {
+            moveOptions.transform.GetChild(2).gameObject.SetActive(false);
+        }
     }
 
     public void StopShowingOptions()
     {
+        isShowingOptions = false;
         timeManager.ResetTimescale();
         moveOptions.SetActive(false);
     }

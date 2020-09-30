@@ -7,7 +7,7 @@ public class TimeManager : MonoBehaviour
         Slow,
         Fast,
         Normal
-    }
+    };
 
     [SerializeField, Range(0.01f, 3f)] private float defaultScale = 0.1f;
     private float resetLength = 0f;
