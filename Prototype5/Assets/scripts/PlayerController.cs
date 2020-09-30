@@ -24,6 +24,11 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] UnityEngine.Object impact;
 
+    //health
+    public HealthbarScript healthbar;
+    public int maxHealth = 100;
+    public int currentHealth;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +36,9 @@ public class PlayerController : MonoBehaviour
         boxCollider2d = transform.GetComponent<BoxCollider2D>();
         timeManager = GameObject.Find("TimeManager").GetComponent<TimeManager>();
         soundManager = GameObject.Find("Sounds").GetComponent<SoundManager>();
+
+        currentHealth = maxHealth;
+        healthbar.SetMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
@@ -101,19 +109,6 @@ public class PlayerController : MonoBehaviour
     {
         float extraHeightText = .05f; 
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider2d.bounds.center, boxCollider2d.bounds.size, 0f, Vector2.down, extraHeightText, groundLayerMask);
-        //Color rayColor;
-        //if (raycastHit.collider != null)
-        //{
-        //    rayColor = Color.green;
-        //}
-        //else
-        //{
-        //    rayColor = Color.red;
-        //}
-        //Debug.DrawRay(boxCollider2d.bounds.center + new Vector3(boxCollider2d.bounds.extents.x, 0), Vector2.down * (boxCollider2d.bounds.extents.y + extraHeightText), rayColor);
-        //Debug.DrawRay(boxCollider2d.bounds.center - new Vector3(boxCollider2d.bounds.extents.x, 0), Vector2.down * (boxCollider2d.bounds.extents.y + extraHeightText), rayColor);
-        //Debug.DrawRay(boxCollider2d.bounds.center - new Vector3(boxCollider2d.bounds.extents.x, boxCollider2d.bounds.extents.y), Vector2.right * (boxCollider2d.bounds.extents.x), rayColor);
-        //Debug.Log(raycastHit.collider);
         return raycastHit.collider != null;
     }
 
@@ -156,7 +151,32 @@ public class PlayerController : MonoBehaviour
             GameObject.Instantiate(impact, collision.GetContact(0).point, Quaternion.identity);
             soundManager.PlayLand();
         }
+
+        if ((collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "bonusEnemy") && !isDashing)
+        {
+            TakeDamage(10);
+        }
+        if (collision.gameObject.tag == "bonusEnemy" && isDashing)
+        {
+            Debug.Log("it should work");
+            GetHealth(30);
+        }
+
+
     }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        healthbar.SetHealth(currentHealth);
+    }
+
+    public void GetHealth(int health)
+    {
+        currentHealth += 10;
+        healthbar.SetHealth(currentHealth);
+    }
+
 
     IEnumerator Dash()
     {

@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 5908027947041498721}
   m_Layer: 0
   m_Name: BounceEnemy
-  m_TagString: Untagged
+  m_TagString: bonusEnemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

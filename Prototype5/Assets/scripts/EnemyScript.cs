@@ -25,7 +25,7 @@ public class EnemyScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            Debug.Log("hit detected");
+            //Debug.Log("hit detected");
             collision.gameObject.GetComponent<PlayerController>().StopShowingOptions();
             if (collision.gameObject.GetComponent<PlayerController>().isDashing)
             {
@@ -47,7 +47,7 @@ public class EnemyScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "Destroy")
         {
-            Debug.Log("Object destroy");
+            //Debug.Log("Object destroy");
             Destroy(this.gameObject);
         }
     }
