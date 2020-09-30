@@ -36,6 +36,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        }
+
         // Movement controls
         if (IsGrounded() && Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -55,6 +60,11 @@ public class PlayerController : MonoBehaviour
             rigidbody2d.AddForce(new Vector2(0, -jumpForce));
         }
 
+        // Press space to skip choosing movement
+        if (isShowingOptions && Input.GetKeyDown(KeyCode.Space))
+        {
+            StopShowingOptions();
+        }
 
         // A "dash" simulated by speeding up time briefly
         if (dashTimer > 0f)
