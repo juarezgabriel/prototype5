@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public BoxCollider2D boxCollider2d;
 
     private TimeManager timeManager;
+    private SoundManager soundManager;
     [SerializeField] private GameObject moveOptions;
     private bool isShowingOptions = false;
 
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
         rigidbody2d = transform.GetComponent<Rigidbody2D>();
         boxCollider2d = transform.GetComponent<BoxCollider2D>();
         timeManager = GameObject.Find("TimeManager").GetComponent<TimeManager>();
+        soundManager = GameObject.Find("Sounds").GetComponent<SoundManager>();
     }
 
     // Update is called once per frame
@@ -67,6 +69,7 @@ public class PlayerController : MonoBehaviour
         {
             StopShowingOptions();
             timeManager.ChangeTimescale(3f, dashTime);
+            soundManager.PlayDash();
             isDashing = true;
             dashTimer = dashCoolDown;
             StartCoroutine(Dash());
@@ -138,7 +141,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameObject.Instantiate(impact, collision.GetContact(0).point, Quaternion.identity);
+        if (collision.gameObject.name == "Ground" && collision.relativeVelocity.magnitude > 2f)
+        {
+            GameObject.Instantiate(impact, collision.GetContact(0).point, Quaternion.identity);
+            soundManager.PlayLand();
+        }
     }
 
     IEnumerator Dash()

@@ -31,12 +31,14 @@ public class EnemyScript : MonoBehaviour
             {
                 // Dashing player destroys an enemy
                 GameObject.Instantiate(slash, transform.position, Quaternion.identity);
+                GameObject.Find("Sounds").GetComponent<SoundManager>().PlaySlash();
                 Destroy(gameObject);
             }
             else
             {
                 // Non-dashing player gets hurt
                 GameObject.Instantiate(explosion, transform.position, Quaternion.identity);
+                GameObject.Find("Sounds").GetComponent<SoundManager>().PlayExplosion();
             }
         }
     }
