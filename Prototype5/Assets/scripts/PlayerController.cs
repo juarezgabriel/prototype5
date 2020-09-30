@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject moveOptions;
     private bool isShowingOptions = false;
 
+    [SerializeField] UnityEngine.Object impact;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -132,6 +134,11 @@ public class PlayerController : MonoBehaviour
         isShowingOptions = false;
         timeManager.ResetTimescale();
         moveOptions.SetActive(false);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        GameObject.Instantiate(impact, collision.GetContact(0).point, Quaternion.identity);
     }
 
     IEnumerator Dash()

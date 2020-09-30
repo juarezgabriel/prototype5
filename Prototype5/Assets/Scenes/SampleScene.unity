@@ -1178,6 +1178,7 @@ MonoBehaviour:
   rigidbody2d: {fileID: 0}
   boxCollider2d: {fileID: 0}
   moveOptions: {fileID: 2076994020}
+  impact: {fileID: 9127653965126434405, guid: 3c6022ac1a1cc7b438777188ae54da0e, type: 3}
 --- !u!1 &1818695691
 GameObject:
   m_ObjectHideFlags: 0

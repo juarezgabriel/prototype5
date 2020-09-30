@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour
 {
     [SerializeField] float speed = 5;
+    [SerializeField] UnityEngine.Object explosion;
+    [SerializeField] UnityEngine.Object slash;
 
     // Start is called before the first frame update
     void Start()
@@ -28,11 +30,13 @@ public class EnemyScript : MonoBehaviour
             if (collision.gameObject.GetComponent<PlayerController>().isDashing)
             {
                 // Dashing player destroys an enemy
+                GameObject.Instantiate(slash, transform.position, Quaternion.identity);
                 Destroy(gameObject);
             }
             else
             {
                 // Non-dashing player gets hurt
+                GameObject.Instantiate(explosion, transform.position, Quaternion.identity);
             }
         }
     }
