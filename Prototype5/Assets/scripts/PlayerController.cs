@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float jumpForce = 500f;
-    [SerializeField] float doubleJumpForce = 250f;
-    bool doubleJump = false;
+    [SerializeField] float doubleJumpForce = 500f;
+    bool doubleJumpAllowed = false;
+    bool onGround = false;
     [SerializeField] private LayerMask groundLayerMask;
     public bool isDashing = false;
     private float dashTime = 0.5f;
@@ -33,20 +34,20 @@ public class PlayerController : MonoBehaviour
         {
             StopShowingOptions();
             rigidbody2d.AddForce(new Vector2(0, jumpForce));
+            doubleJumpAllowed = true;
+        }
+        else if (doubleJumpAllowed && Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            rigidbody2d.AddForce(new Vector2(0, jumpForce));
+            doubleJumpAllowed = false;
+        }
+        else if (!IsGrounded() && Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            StopShowingOptions();
+            rigidbody2d.AddForce(new Vector2(0, -jumpForce));
+            rigidbody2d.AddForce(new Vector2(0, -jumpForce));
         }
 
-        if (!IsGrounded() && Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            StopShowingOptions();
-            rigidbody2d.AddForce(new Vector2(0, -jumpForce));
-            rigidbody2d.AddForce(new Vector2(0, -jumpForce));
-        }
-        else if (!IsGrounded() && Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            StopShowingOptions();
-            rigidbody2d.AddForce(new Vector2(0, doubleJumpForce));
-            doubleJump = false;
-        }
 
         // A "dash" simulated by speeding up time briefly
         if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -57,13 +58,17 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Dash());
         }
 
+        if (isDashing == true)
+        {
+            transform.Rotate(0, 0, 500 * Time.deltaTime);
+        }
+
         // keep MoveOptions transform position updated
         moveOptions.transform.position = transform.position;
     }
 
     private bool IsGrounded()
     {
-        doubleJump = true;
         float extraHeightText = .05f; 
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider2d.bounds.center, boxCollider2d.bounds.size, 0f, Vector2.down, extraHeightText, groundLayerMask);
         //Color rayColor;
